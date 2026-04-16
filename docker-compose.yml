@@ -1,0 +1,24 @@
+services:
+  conservation-suite:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: digital-conservation-suite:latest
+    container_name: conservation-suite
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", 
+             "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      # Link your local Windows downloads to the internal Docker pip cache
+      - "C:/Users/Nikki Rani/Downloads/pip_cache:/root/.cache/pip"
+    ports:
+      - "8501:8501"
